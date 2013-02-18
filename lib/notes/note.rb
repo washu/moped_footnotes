@@ -125,7 +125,7 @@ module Footnotes::Notes
           @collection = message.selector[:count]
           @command_type = "count"
         end
-        if message.selector[:map_reduce]
+        if message.log_inspect.include?(":mapreduce")
           @command_type = "mapreduce"
         end
       end
