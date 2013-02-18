@@ -98,18 +98,19 @@ module Footnotes::Notes
       @limit = message.limit
       @query = message.selector.inspect
       # decode it here
-      if message.is_a? Moped::Protocol::Command
-        @command_type = 'command'
-      elsif message.is_a? Moped::Protocol::Query
-        @command_type = 'find'
-      elsif message.is_a? Moped::Protocol::Delete
-        @command_type = 'delete'
-      elsif message.is_a? Moped::Protocol::Insert
-        @command_type = 'insert'
-        @query = message.documents.inspect
-      elsif message.is_a? Moped::Protocol::Update
-        @command_type = 'update'
-        @query = "(#{message.selector.inspect}), (#{message.update.inspect})"
+      case message.class
+        when Moped::Protocol::Command
+          @command_type = 'command'
+        when Moped::Protocol::Query
+          @command_type = 'find'
+        when Moped::Protocol::Delete
+          @command_type = 'delete'
+        when Moped::Protocol::Insert
+          @command_type = 'insert'
+          @query = message.documents.inspect
+        when Moped::Protocol::Update
+          @command_type = 'update'
+          @query = "(#{message.selector.inspect}), (#{message.update.inspect})"
       end
 
       @database = message.database
