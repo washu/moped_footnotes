@@ -69,14 +69,18 @@ module Footnotes::Notes
       MopedSubscriber.events.each_with_index do |event, index|
         time = '(%.3fms)' % [event.duration]
         html << <<-HTML
-            <div>
-              <span>[#{time}] #{event.database}['#{event.collection}'].#{event.name}(#{event.query})</span>
-              #{event.skip.nil? ? "" : "<span>.skip(#{event.sip})</span>"}
-        #{event.limit.nil? ? "" : "<span>.limit(#{event.limit})</span>"}
-        #{event.order.nil? ? "" : "<span>.order(#{event.order})</span>"}
-            </div>
-            <br>
+          #{event.ops.log_inspect.html_safe}
         HTML
+        #html << <<-HTML
+        #    <div>
+        #      <span>[#{time}] #{event.database}['#{event.collection}'].#{event.name}(#{event.query})</span>
+        #      #{event.skip.nil? ? "" : "<span>.skip(#{event.sip})</span>"}
+        #      #{event.limit.nil? ? "" : "<span>.limit(#{event.limit})</span>"}
+        #      #{event.order.nil? ? "" : "<span>.order(#{event.order})</span>"}
+        #   </div>
+        #
+        #    <br>
+        #HTML
       end
       html
     end

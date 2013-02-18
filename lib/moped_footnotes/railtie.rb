@@ -7,11 +7,7 @@ module MopedFootnotes
         methods.each do |m|
           class_eval <<-CODE, __FILE__, __LINE__ + 1
             def #{m}_with_instrumentation(*args, &block)
-              payload = {
-                :name => args[0],
-              }
-              payload.merge!(args[1])
-              ActiveSupport::Notifications.instrumenter.instrument("moped.moped", payload) do
+              ActiveSupport::Notifications.instrumenter.instrument("moped.moped", {ops: args[1]}) do
                 #{m}_without_instrumentation(*args, &block)
                 args
               end
