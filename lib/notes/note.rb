@@ -99,16 +99,16 @@ module Footnotes::Notes
       @query = message.selector.inspect
       # decode it here
       case message.class
-        when Moped::Protocol::Command
+        when Command
           @command_type = 'command'
-        when Moped::Protocol::Query
+        when Query
           @command_type = 'find'
-        when Moped::Protocol::Delete
+        when Delete
           @command_type = 'delete'
-        when Moped::Protocol::Insert
+        when Insert
           @command_type = 'insert'
           @query = message.documents.inspect
-        when Moped::Protocol::Update
+        when Update
           @command_type = 'update'
           @query = "(#{message.selector.inspect}), (#{message.update.inspect})"
         else
