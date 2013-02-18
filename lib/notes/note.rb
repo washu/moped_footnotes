@@ -67,16 +67,19 @@ module Footnotes::Notes
     def content
       html = ''
       MopedSubscriber.events.each_with_index do |event, index|
-       # begin
+        begin
           time = '(%.3fms)' % [event.duration]
-        html << <<-HTML
-            <div>
-              <span>[#{time}] #{event.database}['#{event.collection}'].#{event.name}(#{event.query})</span>
-              #{event.skip < 0 ? "" : "<span>.skip(#{event.skip})</span>"}
-              #{event.limit < 0 ? "" : "<span>.limit(#{event.limit})</span>"}
-           </div>
-            <br>
-        HTML
+          html << <<-HTML
+              <div>
+                <span>[#{time}] #{event.database}['#{event.collection}'].#{event.name}(#{event.query})</span>
+                #{event.skip < 0 ? "" : "<span>.skip(#{event.skip})</span>"}
+                #{event.limit < 0 ? "" : "<span>.limit(#{event.limit})</span>"}
+              </div>
+              <br>
+          HTML
+        rescue Exception => e
+          html << e.message
+        end
       end
       html
     end
