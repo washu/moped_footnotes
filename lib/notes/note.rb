@@ -74,8 +74,8 @@ module Footnotes::Notes
               <div>
                 <span>
                   [#{time}] #{event.database}['#{event.collection}'].#{event.command_type}(#{event.query})
-                  #{event.skip > 0 ? "" : ".skip(#{event.skip})"}
-                  #{event.limit < 0 ? "" : ".limit(#{event.limit})"}
+                  #{event.skip.to_i > 0 ? "" : ".skip(#{event.skip})"}
+                  #{event.limit.to_i < 0 ? "" : ".limit(#{event.limit})"}
                 </span>
               </div>
               <br>
@@ -95,7 +95,7 @@ module Footnotes::Notes
       super(name, start, ending, transaction_id, {})
       message = payload[:ops].first
       @skip = message.skip.to_i
-      @limit = message.limit
+      @limit = message.limit.to_i
       @query = message.selector.inspect
       # decode it here
       case message.class
