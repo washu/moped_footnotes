@@ -98,17 +98,17 @@ module Footnotes::Notes
       @limit = message.limit.to_i
       @query = message.selector.inspect
       # decode it here
-      case message.class
-        when Command
+      case message.class.to_s
+        when 'Moped::Protocol::Command'
           @command_type = 'command'
-        when Query
+        when 'Moped::Protocol::Query'
           @command_type = 'find'
-        when Delete
+        when 'Moped::Protocol::Delete'
           @command_type = 'delete'
-        when Insert
+        when 'Moped::Protocol::Insert'
           @command_type = 'insert'
           @query = message.documents.inspect
-        when Update
+        when 'Moped::Protocol::Update'
           @command_type = 'update'
           @query = "(#{message.selector.inspect}), (#{message.update.inspect})"
         else
