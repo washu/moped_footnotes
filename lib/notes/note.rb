@@ -71,7 +71,7 @@ module Footnotes::Notes
           time = '(%.3fms)' % [event.duration]
           html << <<-HTML
             <div>
-              QUERY::: #{event.ops.log_inspect.html_safe}
+              QUERY::: #{event.ops.log_inspect.html_safe} ::: #{event.ops.inspect}
             </div>
           HTML
         rescue Exception => e
@@ -84,7 +84,6 @@ module Footnotes::Notes
         #      #{event.limit.nil? ? "" : "<span>.limit(#{event.limit})</span>"}
         #      #{event.order.nil? ? "" : "<span>.order(#{event.order})</span>"}
         #   </div>
-        #
         #    <br>
         #HTML
       end
@@ -105,7 +104,7 @@ module Footnotes::Notes
     end
 
     def database
-      payload[:database]
+      ops.database
     end
 
     def collection
