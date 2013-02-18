@@ -67,25 +67,16 @@ module Footnotes::Notes
     def content
       html = ''
       MopedSubscriber.events.each_with_index do |event, index|
-        begin
+       # begin
           time = '(%.3fms)' % [event.duration]
-          html << <<-HTML
+        html << <<-HTML
             <div>
-              QUERY::: #{event.ops.log_inspect.html_safe} ::: #{event.ops.inspect}
-            </div>
-          HTML
-        rescue Exception => e
-          html = "#{e.to_s} ::: #{event.inspect}"
-        end
-        #html << <<-HTML
-        #    <div>
-        #      <span>[#{time}] #{event.database}['#{event.collection}'].#{event.name}(#{event.query})</span>
-        #      #{event.skip.nil? ? "" : "<span>.skip(#{event.sip})</span>"}
-        #      #{event.limit.nil? ? "" : "<span>.limit(#{event.limit})</span>"}
-        #      #{event.order.nil? ? "" : "<span>.order(#{event.order})</span>"}
-        #   </div>
-        #    <br>
-        #HTML
+              <span>[#{time}] #{event.database}['#{event.collection}'].#{event.name}(#{event.query})</span>
+              #{event.skip < 0 ? "" : "<span>.skip(#{event.skip})</span>"}
+              #{event.limit < 0 ? "" : "<span>.limit(#{event.limit})</span>"}
+           </div>
+            <br>
+        HTML
       end
       html
     end
@@ -95,40 +86,55 @@ module Footnotes::Notes
 
 
   class MopedNotificationEvent < ActiveSupport::Notifications::Event
+    attr_reader :database, :query, :command, :command_type, :collection
     def initialize (name, start, ending, transaction_id, payload)
-      super(name, start, ending, transaction_id, payload)
+      super(name, start, ending, transaction_id, {})
+      message = payload[:ops].first
+      @query = mesage.selector.inspect.html_safe
+      # decode it here
+      if message.is_a? Moped::Protcol::Command
+        @command_type = "Command"
+      end
+      if message.is_a? Moped::Protcol::Query
+        @command_type = "Query"
+      end
+      if message.is_a? Moped::Protcol::Delete
+        @command_type = "Delete"
+      end
+      if message.is_a? Moped::Protcol::Insert
+        @command_type = "Insert"
+        @query = message.documents.inspect
+      end
+      if message.is_a? Moped::Protcol::Update
+        @command_type = "Update"
+        @query = "(#{message.selector.inspect}), (#{message.update.inspect})".html_safe
+      end
+
+      @database = message.database
+      if message.responds_to? :collection
+        @collection = message.collection
+      else
+        @collection = "$cmd"
+        if message.selector[:count]
+          @collection = message.selector[:count]
+        end
+      end
     end
 
     def ops
       payload[:ops].first
     end
 
-    def database
-      ops.database
-    end
-
-    def collection
-      payload[:collection]
-    end
-
     def name
-      payload[:name]
-    end
-
-    def query
-      payload.values_at(:selector, :document, :documents, :fields ).compact.map(&:inspect).join(', ')
+      @command_type
     end
 
     def skip
-      payload[:skip]
+      ops.skip
     end
 
     def limit
-      payload[:limit]
-    end
-
-    def order
-      payload[:order]
+      ops.limit
     end
   end
 
