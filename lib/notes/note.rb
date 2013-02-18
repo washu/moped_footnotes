@@ -69,7 +69,9 @@ module Footnotes::Notes
       MopedSubscriber.events.each_with_index do |event, index|
         time = '(%.3fms)' % [event.duration]
         html << <<-HTML
-          #{event.ops.log_inspect.html_safe}
+          <div>
+            #{event.ops.log_inspect.html_safe}
+          </div>
         HTML
         #html << <<-HTML
         #    <div>
@@ -92,6 +94,10 @@ module Footnotes::Notes
   class MopedNotificationEvent < ActiveSupport::Notifications::Event
     def initialize (name, start, ending, transaction_id, payload)
       super(name, start, ending, transaction_id, payload)
+    end
+
+    def ops
+      payload[:ops]
     end
 
     def database
