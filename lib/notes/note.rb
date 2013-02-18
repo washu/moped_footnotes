@@ -111,6 +111,8 @@ module Footnotes::Notes
         when Moped::Protocol::Update
           @command_type = 'update'
           @query = "(#{message.selector.inspect}), (#{message.update.inspect})"
+        else
+          @command_type = "unknown"
       end
 
       @database = message.database
