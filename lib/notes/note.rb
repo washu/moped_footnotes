@@ -93,7 +93,7 @@ module Footnotes::Notes
     def initialize (name, start, ending, transaction_id, payload)
       super(name, start, ending, transaction_id, {})
       message = payload[:ops].first
-      @query = mesage.selector.inspect.html_safe
+      @query = message.selector.inspect.html_safe
       # decode it here
       if message.is_a? Moped::Protcol::Command
         @command_type = "Command"
