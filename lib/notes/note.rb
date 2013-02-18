@@ -74,8 +74,8 @@ module Footnotes::Notes
               <div>
                 <span>
                   [#{time}] #{event.database}['#{event.collection}'].#{event.command_type}(#{event.query})
-                  #{event.skip.to_i > 0 ? "" : ".skip(#{event.skip})"}
-                  #{event.limit.to_i < 0 ? "" : ".limit(#{event.limit})"}
+                  #{event.skip.to_i <=> ? "" : ".skip(#{event.skip})"}
+                  #{event.limit.to_i <= 0 ? "" : ".limit(#{event.limit})"}
                 </span>
               </div>
               <br>
