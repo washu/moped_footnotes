@@ -97,20 +97,20 @@ module Footnotes::Notes
       @limit = message.limit
       @query = message.selector.inspect.html_safe
       # decode it here
-      if message.is_a? Moped::Protcol::Command
+      if message.is_a? Moped::Protocol::Command
         @command_type = "Command"
       end
-      if message.is_a? Moped::Protcol::Query
+      if message.is_a? Moped::Protocol::Query
         @command_type = "Query"
       end
-      if message.is_a? Moped::Protcol::Delete
+      if message.is_a? Moped::Protocol::Delete
         @command_type = "Delete"
       end
-      if message.is_a? Moped::Protcol::Insert
+      if message.is_a? Moped::Protocol::Insert
         @command_type = "Insert"
         @query = message.documents.inspect
       end
-      if message.is_a? Moped::Protcol::Update
+      if message.is_a? Moped::Protocol::Update
         @command_type = "Update"
         @query = "(#{message.selector.inspect}), (#{message.update.inspect})".html_safe
       end
