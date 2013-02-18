@@ -71,11 +71,11 @@ module Footnotes::Notes
           time = '(%.3fms)' % [event.duration]
           html << <<-HTML
             <div>
-              #{event.ops.log_inspect.html_safe}
+              QUERY::: #{event.ops.log_inspect.html_safe}
             </div>
           HTML
         rescue Exception => e
-          html = "#{e.inspect} #{event.inspect}"
+          html = "#{e.to_s} ::: #{event.inspect}"
         end
         #html << <<-HTML
         #    <div>
