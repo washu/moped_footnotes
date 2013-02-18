@@ -18,7 +18,7 @@ module MopedFootnotes
       end
     end
     MopedFootnotes.load!
-    instrument Moped::Node[
+    instrument Moped::Node,[
         :log_operations
     ]
     ActiveSupport.on_load(:action_controller) do
