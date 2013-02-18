@@ -101,7 +101,7 @@ module Footnotes::Notes
     end
 
     def ops
-      payload[:ops]
+      payload[:ops].first
     end
 
     def database
