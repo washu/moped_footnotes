@@ -94,24 +94,20 @@ module Footnotes::Notes
     def initialize (name, start, ending, transaction_id, payload)
       super(name, start, ending, transaction_id, {})
       message = payload[:ops].first
-      @skip = message.skip
+      @skip = message.skip.to_i
       @limit = message.limit
       @query = message.selector.inspect
       # decode it here
       if message.is_a? Moped::Protocol::Command
         @command_type = 'command'
-      end
-      if message.is_a? Moped::Protocol::Query
+      elsif message.is_a? Moped::Protocol::Query
         @command_type = 'find'
-      end
-      if message.is_a? Moped::Protocol::Delete
+      elsif message.is_a? Moped::Protocol::Delete
         @command_type = 'delete'
-      end
-      if message.is_a? Moped::Protocol::Insert
+      elsif message.is_a? Moped::Protocol::Insert
         @command_type = 'insert'
         @query = message.documents.inspect
-      end
-      if message.is_a? Moped::Protocol::Update
+      elsif message.is_a? Moped::Protocol::Update
         @command_type = 'update'
         @query = "(#{message.selector.inspect}), (#{message.update.inspect})"
       end
@@ -121,14 +117,15 @@ module Footnotes::Notes
         @collection = message.collection
       else
         @collection = "$cmd"
-        if message.selector[:count]
-          @collection = message.selector[:count]
-          @command_type = "count"
-        end
-        if message.log_inspect.include?(":mapreduce")
-          @command_type = "mapreduce"
-        end
       end
+      if @collection.eql?("$cmd") && message.selector[:count]
+        @collection = message.selector[:count]
+        @command_type = "count"
+      end
+      if message.log_inspect.include?(":mapreduce")
+        @command_type = "mapreduce"
+      end
+
     end
   end
 
