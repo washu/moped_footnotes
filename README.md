@@ -1,14 +1,14 @@
-# MongoFootnotes
+# MopedFootnotes
 
 Adds Mongo queries to the rails-footnote gem
-this will not work with the newest version of mongoid as it doesnt use the offical driver.
+This gem only works for moped.
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
     gem "rails-footnotes", ">= 3.7", :group => :development
-    gem 'mongo_footnotes', :group => :development
+    gem 'moped_footnotes', :group => :development
 
 And then execute:
 
@@ -16,7 +16,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install mongo_footnotes
+    $ gem install moped_footnotes
 
 ## Usage
 
