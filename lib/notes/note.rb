@@ -71,7 +71,7 @@ module Footnotes::Notes
           time = '(%.3fms)' % [event.duration]
           html << <<-HTML
               <div>
-                <span>[#{time}] #{event.database}['#{event.collection}'].#{event.command_type}(#{event.query})</span>
+                <span><pre>[#{time}] #{event.database}['#{event.collection}'].#{event.command_type}(#{event.query})</pre></span>
                 #{event.skip < 0 ? "" : "<span>.skip(#{event.skip})</span>"}
                 #{event.limit < 0 ? "" : "<span>.limit(#{event.limit})</span>"}
               </div>
@@ -86,8 +86,6 @@ module Footnotes::Notes
   end
 
 
-
-
   class MopedNotificationEvent < ActiveSupport::Notifications::Event
     attr_reader :database, :query, :command, :command_type, :collection, :skip, :limit
     def initialize (name, start, ending, transaction_id, payload)
@@ -98,25 +96,25 @@ module Footnotes::Notes
       @query = message.selector.inspect.html_safe
       # decode it here
       if message.is_a? Moped::Protocol::Command
-        @command_type = "Command"
+        @command_type = 'Command'
       end
       if message.is_a? Moped::Protocol::Query
-        @command_type = "Query"
+        @command_type = 'Query'
       end
       if message.is_a? Moped::Protocol::Delete
-        @command_type = "Delete"
+        @command_type = 'Delete'
       end
       if message.is_a? Moped::Protocol::Insert
-        @command_type = "Insert"
+        @command_type = 'Insert'
         @query = message.documents.inspect
       end
       if message.is_a? Moped::Protocol::Update
-        @command_type = "Update"
-        @query = "(#{message.selector.inspect}), (#{message.update.inspect})".html_safe
+        @command_type = 'Update'
+        @query = "(#{message.selector.inspect}), (#{message.update.inspect})"
       end
 
       @database = message.database
-      if message.responds_to? :collection
+      if message.respond_to? :collection
         @collection = message.collection
       else
         @collection = "$cmd"
