@@ -12,7 +12,7 @@ module MopedFootnotes
     def cleanup_view_runtime
       moped_rt_before_render = Footnotes::Notes::MopedSubscriber.reset_runtime
       runtime = super
-      mongo_rt_after_render = Footnotes::Notes::MopedSubscriber.reset_runtime
+      moped_rt_after_render = Footnotes::Notes::MopedSubscriber.reset_runtime
       self.moped_runtime = mongo_rt_before_render + moped_rt_after_render
       runtime - moped_rt_after_render
     end
