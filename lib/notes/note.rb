@@ -1,3 +1,4 @@
+require 'moped'
 module Footnotes::Notes
   class MopedSubscriber < ActiveSupport::LogSubscriber
     include Singleton
@@ -93,7 +94,7 @@ module Footnotes::Notes
       message = payload[:ops].first
       @skip = message.skip
       @limit = message.limit
-      @query = message.selector.inspect.html_safe
+      @query = message.selector.inspect
       # decode it here
       if message.is_a? Moped::Protocol::Command
         @command_type = 'Command'
