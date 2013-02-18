@@ -71,7 +71,7 @@ module Footnotes::Notes
           time = '(%.3fms)' % [event.duration]
           html << <<-HTML
               <div>
-                <span>[#{time}] #{event.database}['#{event.collection}'].#{event.name}(#{event.query})</span>
+                <span>[#{time}] #{event.database}['#{event.collection}'].#{event.command_type}(#{event.query})</span>
                 #{event.skip < 0 ? "" : "<span>.skip(#{event.skip})</span>"}
                 #{event.limit < 0 ? "" : "<span>.limit(#{event.limit})</span>"}
               </div>
@@ -89,10 +89,12 @@ module Footnotes::Notes
 
 
   class MopedNotificationEvent < ActiveSupport::Notifications::Event
-    attr_reader :database, :query, :command, :command_type, :collection
+    attr_reader :database, :query, :command, :command_type, :collection, :skip, :limit
     def initialize (name, start, ending, transaction_id, payload)
       super(name, start, ending, transaction_id, {})
       message = payload[:ops].first
+      @skip = message.skip
+      @limit = message.limit
       @query = message.selector.inspect.html_safe
       # decode it here
       if message.is_a? Moped::Protcol::Command
@@ -122,22 +124,6 @@ module Footnotes::Notes
           @collection = message.selector[:count]
         end
       end
-    end
-
-    def ops
-      payload[:ops].first
-    end
-
-    def name
-      @command_type
-    end
-
-    def skip
-      ops.skip
-    end
-
-    def limit
-      ops.limit
     end
   end
 
