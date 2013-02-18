@@ -72,9 +72,11 @@ module Footnotes::Notes
           time = '(%.3fms)' % [event.duration]
           html << <<-HTML
               <div>
-                <span><pre>[#{time}] #{event.database}['#{event.collection}'].#{event.command_type}(#{event.query})</pre></span>
-                #{event.skip < 0 ? "" : "<span>.skip(#{event.skip})</span>"}
-                #{event.limit < 0 ? "" : "<span>.limit(#{event.limit})</span>"}
+                <span>
+                  [#{time}] #{event.database}['#{event.collection}'].#{event.command_type}(#{event.query})
+                  #{event.skip > 0 ? "" : ".skip(#{event.skip})"}
+                  #{event.limit < 0 ? "" : ".limit(#{event.limit})"}
+                </span>
               </div>
               <br>
           HTML
@@ -97,20 +99,20 @@ module Footnotes::Notes
       @query = message.selector.inspect
       # decode it here
       if message.is_a? Moped::Protocol::Command
-        @command_type = 'Command'
+        @command_type = 'command'
       end
       if message.is_a? Moped::Protocol::Query
-        @command_type = 'Query'
+        @command_type = 'find'
       end
       if message.is_a? Moped::Protocol::Delete
-        @command_type = 'Delete'
+        @command_type = 'delete'
       end
       if message.is_a? Moped::Protocol::Insert
-        @command_type = 'Insert'
+        @command_type = 'insert'
         @query = message.documents.inspect
       end
       if message.is_a? Moped::Protocol::Update
-        @command_type = 'Update'
+        @command_type = 'update'
         @query = "(#{message.selector.inspect}), (#{message.update.inspect})"
       end
 
@@ -121,6 +123,10 @@ module Footnotes::Notes
         @collection = "$cmd"
         if message.selector[:count]
           @collection = message.selector[:count]
+          @command_type = "count"
+        end
+        if message.selector[:map_reduce]
+          @command_type = "mapreduce"
         end
       end
     end
